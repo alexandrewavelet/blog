@@ -1,24 +1,54 @@
 <?php
 	
+	session_start();
+
 	// On inclut la connexion à la BDD et le fichier de fonctions
 	include('includes/connexion.inc.php');
 	include('modeles/fonctions.php');
+	include('includes/cookie.inc.php');
 
 	// On récupère l'action à effectuer par le contrôleur
 	if (isset($_GET['action'])) {
-		$action = $_GET['action'];
+		$action = htmlentities($_GET['action']);
 	}else{
 		$action = '';
 	}
 
 	// Switch pour effectuer les traitements selon l'action demandée
 	switch ($action) {
+
 		case 'connexion':
-			# code...
+			if (isset($_POST['valider'])) {
+				$login = htmlentities(mysql_real_escape_string($_POST['identifiant']));
+				$mdp = md5(htmlentities(mysql_real_escape_string($_POST['mdp'])));
+				$seSouvenir = false;
+				if (isset($_POST['seSouvenir'])) {
+					$seSouvenir = true;
+				}			
+				$connecte = connexionUtilisateur($login, $mdp, $seSouvenir);
+			}else{
+				$connecte = array(false, "Une erreur s'est produite, veuillez réessayer.");
+			}
+
+			if ($connecte[0]) {
+				$page = 1;
+				$listeArticles = getArticlesPage($page);
+				$nombrePages = getNombrePages();
+				include('vues/accueil.php');		
+			}else{
+				$erreur = $connecte[1];
+				include('vues/erreur.php');
+			}
+
 			break;
 
 		case 'deconnexion':
-			# code...
+			deconnexionUtilisateur();
+			$page = 1;
+			$listeArticles = getArticlesPage($page);
+			$nombrePages = getNombrePages();
+			include('vues/accueil.php');
+
 			break;
 		
 		default:
@@ -28,10 +58,13 @@
 			}else{
 				$page = 1;
 			}
+
 			$listeArticles = getArticlesPage($page);
 			$nombrePages = getNombrePages();
 			include('vues/accueil.php');
+
 			break;
+
 	}
 
 ?>

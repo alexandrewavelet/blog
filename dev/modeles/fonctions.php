@@ -25,9 +25,45 @@
 		return $nombrePages;
 	}
 
+	// Param $login : identifiant de l'utilisateur
+	// Param $mdp : le mot de passe rentré
+	// Param $seSouvenir : checkbox pour savoir si on doit enregistrer sa connexion dans un cookie
+	// Return $connexion : tableau : [0] true si la connexion est réussie, [1] message d'erreur à afficher si la connexion échoue
+	function connexionUtilisateur($login, $mdp, $seSouvenir){
+		$requeteConnexion = 'SELECT COUNT(*) AS connecte FROM utilisateurs WHERE login = "'.$login.'" AND mdp = "'.$mdp.'"';
+		$res = mysql_query($requeteConnexion);
+		$connecte = mysql_fetch_array($res)['connecte'];
+		if ($connecte == 1) {
+			$connexion = array(true, "Connexion réussie");
+			$_SESSION['utilisateur'] = $login;
+			$_SESSION['connecte'] = true;
+			if ($seSouvenir) {
+				setcookie('souvenir', true, time() + 365*24*3600);
+				setcookie('login', $login, time() + 365*24*3600);
+				setcookie('mdp', $mdp, time() + 365*24*3600);
+			}
+		}else{
+			$connexion = array(false, "La combinaison identifiant/mot de passe entrée est incorrecte.");
+		}
+		return $connexion;
+	}
+
+	// Supprime les variables de session et les cookies
+	function deconnexionUtilisateur(){
+		$_SESSION = array();
+		session_destroy();
+		setcookie('souvenir', NULL, -1);
+		setcookie('login', NULL, -1);
+		setcookie('mdp', NULL, -1);
+	}
+
 	// Return $booleen : true si l'utilisateur est connecté, false sinon
 	function estConnecte(){
-
+		$booleen = false;
+		if (isset($_SESSION['connecte']) && $_SESSION['connecte']) {
+			$booleen = true;
+		}
+		return $booleen;
 	}
 
 ?>

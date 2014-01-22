@@ -1,14 +1,17 @@
 <?php
 	
+	session_start();
+
 	// On inclut la connexion à la BDD et le fichier de fonctions
 	include('includes/connexion.inc.php');
 	include('modeles/fonctions.php');
+	include('includes/cookie.inc.php');
 
 	if (estConnecte()) {
 
 		// On récupère l'action à effectuer par le contrôleur
 		if (isset($_GET['action'])) {
-			$action = $_GET['action'];
+			$action = htmlentities($_GET['action']);
 		}else{
 			$action = '';
 		}
