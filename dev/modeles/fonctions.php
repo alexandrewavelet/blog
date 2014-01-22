@@ -34,7 +34,7 @@
 		$res = mysql_query($requeteConnexion);
 		$connecte = mysql_fetch_array($res)['connecte'];
 		if ($connecte == 1) {
-			$connexion = array(true, "Connexion réussie");
+			$connexion = array(true, 'Connexion réussie');
 			$_SESSION['utilisateur'] = $login;
 			$_SESSION['connecte'] = true;
 			if ($seSouvenir) {
@@ -43,7 +43,7 @@
 				setcookie('mdp', $mdp, time() + 365*24*3600);
 			}
 		}else{
-			$connexion = array(false, "La combinaison identifiant/mot de passe entrée est incorrecte.");
+			$connexion = array(false, 'La combinaison identifiant/mot de passe entrée est incorrecte.');
 		}
 		return $connexion;
 	}
@@ -65,5 +65,44 @@
 		}
 		return $booleen;
 	}
+
+	// Param $idArticle : id de l'article à supprimer
+	// Return $message : Message d'information sur la suppression
+	function supprimerArticle($idArticle){
+		$requeteMessage = 'SELECT titre FROM articles WHERE id = '.$idArticle;
+		$res = mysql_query($requeteMessage);
+		$message = 'L\'article "'.mysql_fetch_array($res)['titre'].'" (id : '.$idArticle.') a correctement été supprimé.';
+		$requeteSuppression = 'DELETE FROM articles WHERE id = '.$idArticle;
+		$res = mysql_query($requeteSuppression);
+		return $message;
+	}
+
+	// Param $idArticle : l'article demandé
+	// Return $infos : tableau contenant le titre et le contenu de l'article
+	function getArticle($idArticle){
+		$requeteInfos = 'SELECT titre, texte FROM articles WHERE id = '.$idArticle;
+		$res = mysql_query($requeteInfos);
+		$ligne = mysql_fetch_array($res);
+		$infos = array('titre' => $ligne['titre'], 'texte' => $ligne['texte']);
+		return $infos;
+	}
+
+	// Param $titre : titre de l'article
+	// Param $texte : contenu de l'article
+	// Ne retourne rien, enregistre l'article dans la BDD
+	function creerArticle($titre, $texte){
+		$requeteInsertion = 'INSERT INTO articles VALUES (0, "'.$titre.'", "'.$texte.'", UNIX_TIMESTAMP())';
+		$res = mysql_query($requeteInsertion);
+	}
+
+	// Param $id : Identifiant de l'article à modifier
+	// Param $titre : titre de l'article
+	// Param $texte : contenu de l'article
+	// Ne retourne rien, modifie les champs d'un article dans la BDD
+	function modifierArticle($id, $titre, $texte){
+		$requeteModification = 'UPDATE articles SET titre = "'.$titre.'", texte = "'.$texte.'", date = UNIX_TIMESTAMP() WHERE id = '.$id;
+		$res = mysql_query($requeteModification);
+	}
+
 
 ?>

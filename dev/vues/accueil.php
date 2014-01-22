@@ -5,8 +5,11 @@
 	foreach ($listeArticles as $article) {
 		echo '<h3>'.$article['titre'].' - '.date('d/m/Y, G:i', $article['date']).'</h3><br/>';
 		$texte = nl2br(htmlspecialchars($article['texte']));
-		echo $texte;
-		echo '<br/><a href="cAdministrateur.php?action=modifier&id='.$article['id'].'" class="btn btn-primary">Modifier</a><br/>';
+		echo $texte.'<br/>';
+		if (estConnecte()) { // Si l'utilisateur est connecté, on affiche les boutons de gestion des articles
+			echo '<a href="cAdministrateur.php?action=modifier&id='.$article['id'].'" class="btn btn-primary">Modifier</a>';
+			echo '<a href="cAdministrateur.php?action=supprimer&id='.$article['id'].'" class="btn btn-primary">Supprimer</a><br/>';
+		}
 	}
 
 	// Affichage de la pagination

@@ -19,15 +19,41 @@
 		// Switch pour effectuer les traitements selon l'action demandée
 		switch ($action) {
 			case 'rediger':
-				# code...
+				$article = array('titre' => '', 'texte' => '');
+				include('vues/redaction.php');
+
 				break;
 
 			case 'modifier':
-				# code...
+				$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
+				$article = getArticle($idArticle); // à implémenter
+				include('vues/redaction.php');
+
+				break;
+
+			case 'validerRedaction':
+				$titre = htmlspecialchars(mysql_real_escape_string($_POST['titre']));
+				$texte = htmlspecialchars(mysql_real_escape_string($_POST['texte']));
+				if (isset($_POST['idArticle'])) { // On vérifie si l'on a affaire à une modification ou une création d'article
+					modifierArticle($_POST['idArticle'], $titre, $texte);
+				}else{
+					creerArticle($titre, $texte);
+				}
+				header("Location:index.php");
+				exit();
+
 				break;
 
 			case 'supprimer':
-				# code...
+				$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
+				$message = supprimerArticle($idArticle);
+				include('vues/suppression.php');
+				break;
+
+			default:
+				header("Location:index.php");
+				exit();
+
 				break;
 		}
 

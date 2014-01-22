@@ -8,7 +8,7 @@
 						</ul>
 
 						<?php
-							if (estConnecte()) {
+							if (estConnecte()) { // Si l'utilisateur est connecté, on affiche le panel d'administration, sinon le formulaire de connexion
 						?>
 								<h2>Gérer le blog</h2>
 
