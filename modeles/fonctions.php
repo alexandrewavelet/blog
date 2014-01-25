@@ -159,6 +159,19 @@
 
 	// FONCTIONNALITE DE TAGS
 
+	// Param $tag : le tag sur lequel faire la recherche
+	// Return : liste des articles tagés avec le tag spécifié
+	function rechercherArticlesAvecTag($tag){
+		$requeteRecherche = 'SELECT articles.id, titre, texte, date, image, tag FROM articles LEFT JOIN tagsarticles ON articles.id = idArticle LEFT JOIN tags ON tags.id = idTag WHERE tag = "'.$tag.'" ORDER BY date DESC';
+		$res = mysql_query($requeteRecherche);
+		$listeArticles = array();
+		while ($article = mysql_fetch_array($res)) {
+			extract($article);
+			array_push($listeArticles, array('id' => $id, 'titre' => $titre, 'texte' => $texte, 'date' => $date, 'image' => $image, 'tag' => $tag));
+		}
+		return $listeArticles;
+	}
+
 	// Ajoute un tag à l'article en paramètre
 	// Param $idArticle : l'article concerné
 	// Param $tag : le tag à ajouter

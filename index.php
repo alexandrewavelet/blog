@@ -59,9 +59,16 @@
 			break;
 
 		case 'recherche':
-			if (isset($_GET['q'])) {
-				$termeRecherche = htmlspecialchars(mysql_real_escape_string($_GET['q']));
-				$articlesCorrespondants = rechercherArticlesContenant($termeRecherche);
+			if (isset($_GET['q']) || isset($_GET['tag'])) {
+				if (isset($_GET['q'])) {
+					$termeRecherche = htmlspecialchars(mysql_real_escape_string($_GET['q']));
+					$articlesCorrespondants = rechercherArticlesContenant($termeRecherche);
+					$rappelRecherche = 'terme : '.$termeRecherche;
+				}else{
+					$tag = htmlspecialchars(mysql_real_escape_string($_GET['tag']));
+					$articlesCorrespondants = rechercherArticlesAvecTag($tag);
+					$rappelRecherche = 'tag : '.$tag;
+				}
 				include('vues/recherche.php');
 			}else{
 				$erreur = 'Veuillez entrer une recherche';
