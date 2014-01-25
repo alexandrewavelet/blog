@@ -4,6 +4,10 @@
 	// Affichage des articles de la page
 	foreach ($listeArticles as $article) {
 		echo '<h3>'.$article['titre'].' - '.date('d/m/Y, G:i', $article['date']).'</h3><br/>';
+		echo '<p><a href="index.php?action=detail&id='.$article['id'].'">Lire l\'article</a></p>';
+		if ($article['image']) {
+			echo '<img src="data/img/'.$article['id'].'.jpg">';
+		}
 		$texte = nl2br(htmlspecialchars($article['texte']));
 		echo $texte.'<br/>';
 		if (estConnecte()) { // Si l'utilisateur est connecté, on affiche les boutons de gestion des articles

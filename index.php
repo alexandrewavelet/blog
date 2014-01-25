@@ -1,16 +1,89 @@
 <?php
-	include('includes/haut.inc.php');
+	
+	session_start();
+
+	// On inclut la connexion à la BDD et le fichier de fonctions
 	include('includes/connexion.inc.php');
-	$que=mysql_query("SELECT * FROM articles ORDER BY date DESC");
-	while($data=mysql_fetch_array($que))
-	{
-		$date = date("d/m/Y, G:i", $data[3]);
-		echo "<h3>".$data[1]." - ".$date."</h3><BR>";
-		$texte=$data['texte'];
-		// htmlspecialchars();
-		echo str_replace("\n","<BR>",$texte); // nl2br($data['text'];
-		echo "<br/><a href='article.php?id=".$data[0]."' class='btn btn-primary'>Modifier</a><br/>";
-		
+	include('modeles/fonctions.php');
+	include('includes/cookie.inc.php');
+
+	// On récupère l'action à effectuer par le contrôleur
+	if (isset($_GET['action'])) {
+		$action = htmlentities($_GET['action']);
+	}else{
+		$action = '';
 	}
-	include('includes/bas.inc.php');
+
+	// Switch pour effectuer les traitements selon l'action demandée
+	switch ($action) {
+
+		case 'connexion':
+			if (isset($_POST['valider'])) {
+				$login = htmlentities(mysql_real_escape_string($_POST['identifiant']));
+				$mdp = md5(htmlentities(mysql_real_escape_string($_POST['mdp'])));
+				$seSouvenir = false;
+				if (isset($_POST['seSouvenir'])) {
+					$seSouvenir = true;
+				}			
+				$connecte = connexionUtilisateur($login, $mdp, $seSouvenir);
+			}else{
+				$connecte = array(false, "Une erreur s'est produite, veuillez réessayer.");
+			}
+
+			if ($connecte[0]) {
+				$page = 1;
+				$listeArticles = getArticlesPage($page);
+				$nombrePages = getNombrePages();
+				include('vues/accueil.php');		
+			}else{
+				$erreur = $connecte[1];
+				include('vues/erreur.php');
+			}
+
+			break;
+
+		case 'deconnexion':
+			deconnexionUtilisateur();
+			$page = 1;
+			$listeArticles = getArticlesPage($page);
+			$nombrePages = getNombrePages();
+			include('vues/accueil.php');
+
+			break;
+
+		case 'detail':
+			$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
+			$article = getArticle($idArticle);
+			include('vues/detail.php');
+			
+			break;
+
+		case 'recherche':
+			if (isset($_GET['q'])) {
+				$termeRecherche = htmlspecialchars(mysql_real_escape_string($_GET['q']));
+				$articlesCorrespondants = rechercherArticlesContenant($termeRecherche);
+				include('vues/recherche.php');
+			}else{
+				$erreur = 'Veuillez entrer une recherche';
+				include('vues/erreur.php');
+			}
+
+			break;
+		
+		default:
+			// Par défaut, on affiche la page d'accueil, avec les articles correspondants à la page demandée (ou ceux de la première page si rien n'est spécifié)
+			if (isset($_GET['page'])) {
+				$page = $_GET['page'];
+			}else{
+				$page = 1;
+			}
+
+			$listeArticles = getArticlesPage($page);
+			$nombrePages = getNombrePages();
+			include('vues/accueil.php');
+
+			break;
+
+	}
+
 ?>

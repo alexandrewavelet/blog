@@ -10,12 +10,18 @@
 
 ?>
 
-<form action="cAdministrateur.php?action=validerRedaction" method="POST" enctype="multipart/form-data">
+<div id="erreur" class="alert alert-info hide">
+	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	<p></p>
+</div>
+
+<form action="cAdministrateur.php?action=validerRedaction" method="POST" enctype="multipart/form-data" id="formulaire">
 	<?php
 		if(isset($idArticle)){ // Si c'est une modification d'article, on créée un champ caché avec l'id de l'article à modifier dans le formulaire
 			echo '<input type="hidden" name="idArticle" id="idArticle" value="'.$idArticle.'"/>';
 		}
 	?>
+
 	<div class="clearfix">
 		<label for="titre">Titre : </label>
 		<div class="input"><input type="text" name="titre" id="titre" <?php echo "value='".$article['titre']."'"; ?> /></div>
@@ -28,11 +34,33 @@
 		<label for="img">Image : </label>
 		<input type="file" id="img" name="img"/>
 	</div>
+	<?php
+		if (isset($article['image'])) {
+			echo '<p>image actuelle : <img src="data/img/'.$article['id'].'.jpg"></p>';
+		}
+	?>
 	<div class="clearfix">
 		<div class="form-actions"><input class="btn btn-large btn-primary" type="submit" value="Valider" name="valider" id="valider"/></div>
 	</div>
 </form>
 
+<script type="text/javascript" >
+
+	$(function() {
+		$("#formulaire").submit(function() {
+			if ($("#titre,#texte").val() === "") {
+				$("#erreur").removeClass();
+				$("#erreur").addClass("alert alert-danger");
+				$("#erreur>p").html("Veuillez remplir les champs titre et contenu.");
+				$("#erreur").slideDown("slow");
+				return false;
+			}else{
+				return true;
+			}
+		});
+	});
+
+</script>
 <?php
 	include('includes/bas.inc.php');
 ?>

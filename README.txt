@@ -3,7 +3,7 @@ Blog – PHP
 TP de création d'un blog en PHP.
 technologies : PHP, SQL, Smarty, Bootstrap
 
-TODO
+FONCTIONNALITES
 - Reprendre sources dans le dossier modulePHP
 - Affichage des articles avec pagination
 - Création/Modification/Supression d'articles

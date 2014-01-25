@@ -26,7 +26,7 @@
 
 			case 'modifier':
 				$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
-				$article = getArticle($idArticle); // à implémenter
+				$article = getArticle($idArticle);
 				include('vues/redaction.php');
 
 				break;
@@ -35,12 +35,21 @@
 				$titre = htmlspecialchars(mysql_real_escape_string($_POST['titre']));
 				$texte = htmlspecialchars(mysql_real_escape_string($_POST['texte']));
 				if (isset($_POST['idArticle'])) { // On vérifie si l'on a affaire à une modification ou une création d'article
-					modifierArticle($_POST['idArticle'], $titre, $texte);
+					$idArticle = $_POST['idArticle'];
+					modifierArticle($idArticle, $titre, $texte);
 				}else{
-					creerArticle($titre, $texte);
+					$idArticle = creerArticle($titre, $texte);
 				}
-				header("Location:index.php");
-				exit();
+				if (isset($_FILES['img'])) {
+					$message = enregistrerImage($_FILES['img'], $idArticle);
+					if (!$message) {
+						$erreur = $message;
+						include('vues/erreur.php');
+					}else{
+						header("Location:index.php");
+						exit();
+					}
+				}
 
 				break;
 
