@@ -19,7 +19,7 @@
 		// Switch pour effectuer les traitements selon l'action demandée
 		switch ($action) {
 			case 'rediger':
-				$article = array('titre' => '', 'texte' => '');
+				$article = array('titre' => '', 'texte' => '', 'tag' => '');
 				include('vues/redaction.php');
 
 				break;
@@ -34,12 +34,23 @@
 			case 'validerRedaction':
 				$titre = htmlspecialchars(mysql_real_escape_string($_POST['titre']));
 				$texte = htmlspecialchars(mysql_real_escape_string($_POST['texte']));
+
 				if (isset($_POST['idArticle'])) { // On vérifie si l'on a affaire à une modification ou une création d'article
 					$idArticle = $_POST['idArticle'];
 					modifierArticle($idArticle, $titre, $texte);
 				}else{
 					$idArticle = creerArticle($titre, $texte);
 				}
+
+				if (isset($_POST['tag'])) {
+					if (empty($_POST['tag'])) {
+						supprimerTagArticle($idArticle);
+					}else{
+						$tag = $_POST['tag'];
+						ajouterTagArticle($idArticle, $tag);
+					}
+				}
+
 				if (isset($_FILES['img'])) {
 					$message = enregistrerImage($_FILES['img'], $idArticle);
 					if (!$message) {

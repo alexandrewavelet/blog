@@ -5,12 +5,12 @@
 	function getArticlesPage($page){
 		$articlesParPage = 5;
 		$premierArticle = ($page - 1) * $articlesParPage;
-		$requeteArticlesPage = 'SELECT id, titre, texte, date, image FROM articles ORDER BY date DESC LIMIT '.$premierArticle.', '.$articlesParPage;
+		$requeteArticlesPage = 'SELECT articles.id, titre, texte, date, image, tag FROM articles LEFT JOIN tagsarticles ON articles.id = idArticle LEFT JOIN tags ON tags.id = idTag ORDER BY date DESC LIMIT '.$premierArticle.', '.$articlesParPage;
 		$res = mysql_query($requeteArticlesPage);
 		$listeArticles = array();
 		while ($article = mysql_fetch_array($res)) {
 			extract($article);
-			array_push($listeArticles, array('id' => $id, 'titre' => $titre, 'texte' => $texte, 'date' => $date, 'image' => $image));
+			array_push($listeArticles, array('id' => $id, 'titre' => $titre, 'texte' => $texte, 'date' => $date, 'image' => $image, 'tag' => $tag));
 		}
 		return $listeArticles;
 	}
@@ -67,7 +67,7 @@
 	}
 
 	// Param $idArticle : id de l'article à supprimer
-	// Return $message : Message d'information sur la suppression
+	// Return $message : message d'information sur la suppression
 	function supprimerArticle($idArticle){
 		$requeteMessage = 'SELECT titre FROM articles WHERE id = '.$idArticle;
 		$res = mysql_query($requeteMessage);
@@ -80,7 +80,7 @@
 	// Param $idArticle : l'article demandé
 	// Return $infos : tableau contenant le titre et le contenu de l'article
 	function getArticle($idArticle){
-		$requeteInfos = 'SELECT id, titre, texte, date, image FROM articles WHERE id = '.$idArticle;
+		$requeteInfos = 'SELECT articles.id, titre, texte, date, image, tag FROM articles LEFT JOIN tagsarticles ON articles.id = idArticle LEFT JOIN tags ON tags.id = idTag WHERE articles.id = '.$idArticle;
 		$res = mysql_query($requeteInfos);
 		$infos = mysql_fetch_array($res);
 		return $infos;
@@ -96,7 +96,7 @@
 		return $idArticle;
 	}
 
-	// Param $id : Identifiant de l'article à modifier
+	// Param $id : identifiant de l'article à modifier
 	// Param $titre : titre de l'article
 	// Param $texte : contenu de l'article
 	// Ne retourne rien, modifie les champs d'un article dans la BDD
@@ -108,20 +108,20 @@
 	// Param $expression : chaîne à chercher dans les titres et contenus des articles
 	// Return $listeArticles : tableau contenant les articles correspondants
 	function rechercherArticlesContenant($expression){
-		$requeteRecherche = 'SELECT id, titre, texte, date, image FROM articles WHERE titre LIKE "%'.$expression.'%" OR texte LIKE "%'.$expression.'%" ORDER BY date DESC';
+		$requeteRecherche = 'SELECT articles.id, titre, texte, date, image, tag FROM articles LEFT JOIN tagsarticles ON articles.id = idArticle LEFT JOIN tags ON tags.id = idTag WHERE titre LIKE "%'.$expression.'%" OR texte LIKE "%'.$expression.'%" ORDER BY date DESC';
 		$res = mysql_query($requeteRecherche);
 		$listeArticles = array();
 		while ($article = mysql_fetch_array($res)) {
 			extract($article);
-			array_push($listeArticles, array('id' => $id, 'titre' => $titre, 'texte' => $texte, 'date' => $date, 'image' => $image));
+			array_push($listeArticles, array('id' => $id, 'titre' => $titre, 'texte' => $texte, 'date' => $date, 'image' => $image, 'tag' => $tag));
 		}
 		return $listeArticles;
 	}
 
 	// Fonction qui enregistre l'image uploadée dans le formulaire (avec le nom correspondant à l'id de l'article qu'elle illustre)
-	// Param $image : L'image à enregistrer
+	// Param $image : l'image à enregistrer
 	// Param $nomImage : le nom à lui attribuer
-	// Return $info : Le message d'erreur ou true si l'upload s'est bien passé
+	// Return $info : le message d'erreur ou true si l'upload s'est bien passé
 	function enregistrerImage($image, $nomImage){
 		if($image['error'] = 0){
 			$info = "Erreur lors du transfert de l'image";
@@ -141,7 +141,7 @@
 		return $info;
 	}
 
-	// Param $image : L'image à enregistrer
+	// Param $image : l'image à enregistrer
 	// Param $nomImage : le nom à lui attribuer
 	// Ne retourne rien. Enregistre l'image dans le dossier "data/img/"
 	function creerImage($image, $nomImage){
@@ -155,6 +155,81 @@
 		$imageFinale = imagecreatetruecolor($largeur , $hauteur);
 		imagecopyresampled($imageFinale , $imageRedimensionnee, 0, 0, 0, 0, $largeur, $hauteur, $tailleImage[0],$tailleImage[1]);
 		imagejpeg($imageFinale, $dossier.$nomImage.'.jpg', 100);
+	}
+
+	// FONCTIONNALITE DE TAGS
+
+	// Ajoute un tag à l'article en paramètre
+	// Param $idArticle : l'article concerné
+	// Param $tag : le tag à ajouter
+	// Ne retourne rien
+	function ajouterTagArticle($idArticle, $tag){
+		if (articleTage($idArticle)) {
+			supprimerTagArticle($idArticle);
+		}
+		$idTag = getIdTag($tag);
+		$requeteAjout = 'INSERT INTO tagsarticles VALUES ('.$idArticle.', '.$idTag.')';
+		$res = mysql_query($requeteAjout);
+	}
+
+	// Param $idArticle : l'article concerné
+	// Return $booleen : true si l'article possède un tag, faux sinon
+	function articleTage($idArticle){
+		$requeteNombreTags = 'SELECT COUNT(*) AS nombreTags FROM tagsarticles WHERE idArticle = '.$idArticle;
+		$res = mysql_query($requeteNombreTags);
+		$nbTags = mysql_fetch_array($res)['nombreTags'];
+		$booleen = false;
+		if ($nbTags > 0) {
+			$booleen = true;
+		}
+		return $booleen;
+	}
+
+	// Supprime le tag de l'article et vérifie si le tag est encore attribué (le supprime sinon)
+	// Param $idArticle : l'article concerné
+	// Ne retourne rien
+	function supprimerTagArticle($idArticle){
+		$requeteTagPrecedent = 'SELECT idTag FROM tagsarticles WHERE idArticle = '.$idArticle;
+		$res = mysql_query($requeteTagPrecedent);
+		$idTagPrecedent = mysql_fetch_array($res)['idTag'];
+		$requeteSuppression = 'DELETE FROM tagsarticles WHERE idArticle = '.$idArticle;
+		$res = mysql_query($requeteSuppression);
+		$requeteNbArticlesTagPrecedent = 'SELECT COUNT(*) AS nombreArticles FROM tagsarticles WHERE idTag = '.$idTagPrecedent;
+		$res = mysql_query($requeteNbArticlesTagPrecedent);
+		$nbArticlesTagPrecedent = mysql_fetch_array($res)['nombreArticles'];
+		if ($nbArticlesTagPrecedent == 0) {
+			supprimerTag($idTagPrecedent);
+		}
+	}
+
+	// Param $tag = le nom du tag à créer
+	// Return $id = l'identifiant du tag créé
+	function creerTag($tag){
+		$requeteAjout = 'INSERT INTO tags VALUES (0, "'.$tag.'")';
+		$res = mysql_query($requeteAjout);
+		$id = mysql_insert_id();
+		return $id;
+	}
+
+	// Retourne l'id du tag placé en paramètre. S'il n''existe pas, la fonction appelle creerTag() pour le créer et renvoie son id
+	// Param $tag : le tag dont on veut récupérer l'identifiant
+	// Return $id : l'id du tag cherché
+	function getIdTag($tag){
+		$requeteIdTag = 'SELECT id FROM tags WHERE tag = "'.$tag.'"';
+		$res = mysql_query($requeteIdTag);
+		if (mysql_num_rows($res) == 0) {
+			$id = creerTag($tag);
+		}else{
+			$id = mysql_fetch_array($res)['id'];
+		}
+		return $id;
+	}
+
+	// Param $id : identifiant du tag à supprimer
+	// Ne retourne rien, supprime le tag de la BDD
+	function supprimerTag($id){
+		$requeteSuppression = 'DELETE FROM tags WHERE id = '.$id;
+		$res = mysql_query($requeteSuppression);
 	}
 
 ?>

@@ -40,6 +40,10 @@
 		}
 	?>
 	<div class="clearfix">
+		<label for="img">Tag : </label>
+		<input type="text" id="tag" name="tag" <?php echo "value='".$article['tag']."'"; ?>/>
+	</div>
+	<div class="clearfix">
 		<div class="form-actions"><input class="btn btn-large btn-primary" type="submit" value="Valider" name="valider" id="valider"/></div>
 	</div>
 </form>

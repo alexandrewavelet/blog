@@ -6,7 +6,8 @@
 		echo '<img src="data/img/'.$article['id'].'.jpg">';
 	}
 	$texte = nl2br(htmlspecialchars($article['texte']));
-	echo $texte.'<br/>';
+	echo $texte.'<br/><br/><br/>';
+	echo '<p>Tag : '.$article['tag'].'</p>';
 	if (estConnecte()) { // Si l'utilisateur est connecté, on affiche les boutons de gestion des articles
 		echo '<a href="cAdministrateur.php?action=modifier&id='.$article['id'].'" class="btn btn-primary">Modifier</a>';
 		echo '<a href="cAdministrateur.php?action=supprimer&id='.$article['id'].'" class="btn btn-primary">Supprimer</a><br/>';
