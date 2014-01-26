@@ -24,7 +24,8 @@
 		switch ($action) {
 			case 'rediger':
 				$article = array('titre' => '', 'texte' => '', 'tag' => '');
-				$smarty->assign(array('article' => $article));
+				$smarty->assign(array('article' => $article,
+					'utilisateur_connecte' => estConnecte()));
 				$fichier = 'redaction.php';
 
 				break;
@@ -32,7 +33,8 @@
 			case 'modifier':
 				$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
 				$smarty->assign(array('article' => getArticle($idArticle),
-					'idArticle' => $idArticle));
+					'idArticle' => $idArticle,
+					'utilisateur_connecte' => estConnecte()));
 				$fichier = 'redaction.php';
 
 				break;
@@ -62,7 +64,8 @@
 				}
 
 				if (isset($message) && !$message) {
-					$smarty->assign(array('erreur' => $message));
+					$smarty->assign(array('erreur' => $message,
+						'utilisateur_connecte' => estConnecte()));
 					$fichier = 'erreur.php';
 				}else{
 					header('Location:index.php');
@@ -73,7 +76,8 @@
 
 			case 'supprimer':
 				$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
-				$smarty->assign(array('message' => supprimerArticle($idArticle)));
+				$smarty->assign(array('message' => supprimerArticle($idArticle),
+					'utilisateur_connecte' => estConnecte()));
 				$fichier = 'suppression.php';
 
 				break;

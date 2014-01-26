@@ -1,6 +1,6 @@
 {include file="includes/haut.inc.php"}
 
-{if $idArticle}
+{if isset($idArticle)}
 	<h2>Modifier un article</h2>
 {else}
 	<h2>Rédiger un article</h2>
@@ -13,7 +13,7 @@
 
 <form action="cAdministrateur.php?action=validerRedaction" method="POST" enctype="multipart/form-data" id="formulaire">
 
-	{if $idArticle} <!-- Si c'est une modification d'article, on créée un champ caché avec l'id de l'article à modifier dans le formulaire -->
+	{if isset($idArticle)} <!-- Si c'est une modification d'article, on créée un champ caché avec l'id de l'article à modifier dans le formulaire -->
 		<input type="hidden" name="idArticle" id="idArticle" value="{$idArticle}"/>
 	{/if}
 
@@ -29,7 +29,7 @@
 		<label for="img">Image : </label>
 		<input type="file" id="img" name="img"/>
 	</div>
-	{if $article.image}
+	{if isset($article.image) && $article.image}
 		<p>image actuelle : <img src="data/img/{$article.id}.jpg"></p>
 	{/if}
 	<div class="clearfix">

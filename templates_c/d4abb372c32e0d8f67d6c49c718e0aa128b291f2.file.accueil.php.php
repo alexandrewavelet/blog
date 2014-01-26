@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.1.16, created on 2014-01-26 14:14:39
+<?php /* Smarty version Smarty-3.1.16, created on 2014-01-26 14:44:43
          compiled from "vues\accueil.php" */ ?>
-<?php /*%%SmartyHeaderCode:2032552e50a3f332791-67711118%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:2714252e5114b6016e1-62171266%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     'd4abb372c32e0d8f67d6c49c718e0aa128b291f2' => 
     array (
       0 => 'vues\\accueil.php',
-      1 => 1390742072,
+      1 => 1390743344,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '2032552e50a3f332791-67711118',
+  'nocache_hash' => '2714252e5114b6016e1-62171266',
   'function' => 
   array (
   ),
@@ -19,15 +19,16 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   array (
     'listeArticles' => 0,
     'article' => 0,
+    'utilisateur_connecte' => 0,
     'nombrePages' => 0,
     'i' => 0,
     'page' => 0,
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.16',
-  'unifunc' => 'content_52e50a3f3a8678_41241080',
+  'unifunc' => 'content_52e5114b67d718_92815596',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_52e50a3f3a8678_41241080')) {function content_52e50a3f3a8678_41241080($_smarty_tpl) {?><?php if (!is_callable('smarty_modifier_date_format')) include 'E:\\web\\blog\\tpl\\plugins\\modifier.date_format.php';
+<?php if ($_valid && !is_callable('content_52e5114b67d718_92815596')) {function content_52e5114b67d718_92815596($_smarty_tpl) {?><?php if (!is_callable('smarty_modifier_date_format')) include 'E:\\web\\blog\\tpl\\plugins\\modifier.date_format.php';
 if (!is_callable('smarty_modifier_nl2br')) include 'E:\\web\\blog\\tpl\\plugins\\modifier.nl2br.php';
 if (!is_callable('smarty_modifier_truncate')) include 'E:\\web\\blog\\tpl\\plugins\\modifier.truncate.php';
 ?><?php echo $_smarty_tpl->getSubTemplate ("includes/haut.inc.php", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array(), 0);?>
@@ -60,7 +61,7 @@ $_smarty_tpl->tpl_vars['article']->_loop = true;
 </a></p>
 	<?php }?>
 
-	<?php if ('utilisateur_connecte') {?> <!-- // Si l'utilisateur est connecté, on affiche les boutons de gestion des articles -->
+	<?php if ($_smarty_tpl->tpl_vars['utilisateur_connecte']->value) {?> <!-- // Si l'utilisateur est connecté, on affiche les boutons de gestion des articles -->
 		<a href="cAdministrateur.php?action=modifier&id=<?php echo $_smarty_tpl->tpl_vars['article']->value['id'];?>
 " class="btn btn-primary">Modifier</a>
 		<a href="cAdministrateur.php?action=supprimer&id=<?php echo $_smarty_tpl->tpl_vars['article']->value['id'];?>

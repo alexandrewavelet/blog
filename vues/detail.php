@@ -13,7 +13,7 @@
 		<p>Tag : <a href="index.php?action=recherche&tag={$article.tag}">{$article.tag}</a></p>
 	{/if}
 
-	{if utilisateur_connecte} <!-- // Si l'utilisateur est connecté, on affiche les boutons de gestion des articles -->
+	{if $utilisateur_connecte} <!-- // Si l'utilisateur est connecté, on affiche les boutons de gestion des articles -->
 		<a href="cAdministrateur.php?action=modifier&id={$article.id}" class="btn btn-primary">Modifier</a>
 		<a href="cAdministrateur.php?action=supprimer&id={$article.id}" class="btn btn-primary">Supprimer</a><br/>
 	{/if}

@@ -16,7 +16,7 @@
 							<input type="submit" class="btn btn-primary" id="rechercher" name="rechercher" value="rechercher">
 						</form>
 
-						{if utilisateur_connecte} <!-- Si l'utilisateur est connecté, on affiche le panel d'administration, sinon le formulaire de connexion -->
+						{if $utilisateur_connecte} <!-- Si l'utilisateur est connecté, on affiche le panel d'administration, sinon le formulaire de connexion -->
 							<h2>Gérer le blog</h2>
 
 							<p>Vous êtes connecté en tant que <?php echo $_SESSION['utilisateur']; ?>

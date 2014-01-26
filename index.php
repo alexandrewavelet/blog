@@ -37,10 +37,12 @@
 			if ($connecte[0]) {
 				$smarty->assign(array('listeArticles' => getArticlesPage(1),
 					'page' => 1,
-					'nombrePages' => getNombrePages()));
+					'nombrePages' => getNombrePages(),
+					'utilisateur_connecte' => estConnecte()));
 				$fichier = 'accueil.php';		
 			}else{
-				$smarty->assign(array('erreur' => $connecte[1]));
+				$smarty->assign(array('erreur' => $connecte[1],
+					'utilisateur_connecte' => estConnecte()));
 				$fichier = 'erreur.php';
 			}
 
@@ -50,14 +52,16 @@
 			deconnexionUtilisateur();
 			$smarty->assign(array('listeArticles' => getArticlesPage(1),
 				'page' => 1,
-				'nombrePages' => getNombrePages()));
+				'nombrePages' => getNombrePages(),
+				'utilisateur_connecte' => estConnecte()));
 			$fichier = 'accueil.php';
 
 			break;
 
 		case 'detail':
 			$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
-			$smarty->assign(array('article' => getArticle($idArticle)));
+			$smarty->assign(array('article' => getArticle($idArticle),
+				'utilisateur_connecte' => estConnecte()));
 			$fichier = 'detail.php';
 			
 			break;
@@ -74,10 +78,12 @@
 					$rappelRecherche = 'tag : '.$tag;
 				}
 				$smarty->assign(array('articlesCorrespondants' => $articlesCorrespondants,
-					'rappelRecherche' => $rappelRecherche));
+					'rappelRecherche' => $rappelRecherche,
+					'utilisateur_connecte' => estConnecte()));
 				$fichier = 'recherche.php';
 			}else{
-				$smarty->assign(array('erreur' => 'Veuillez entrer un terme à rechercher.'));
+				$smarty->assign(array('erreur' => 'Veuillez entrer un terme à rechercher.',
+					'utilisateur_connecte' => estConnecte()));
 				$fichier = 'erreur.php';
 			}
 
@@ -93,7 +99,8 @@
 
 			$smarty->assign(array('listeArticles' => getArticlesPage($page),
 				'page' => $page,
-				'nombrePages' => getNombrePages()));
+				'nombrePages' => getNombrePages(),
+				'utilisateur_connecte' => estConnecte()));
 			$fichier = 'accueil.php';
 
 			break;

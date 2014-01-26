@@ -1,25 +1,29 @@
-<?php /* Smarty version Smarty-3.1.16, created on 2014-01-26 13:27:50
+<?php /* Smarty version Smarty-3.1.16, created on 2014-01-26 14:44:43
          compiled from "includes\bas.inc.php" */ ?>
-<?php /*%%SmartyHeaderCode:1198352e4fd5a142724-10324984%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:1202052e5114b6edb36-22047392%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     'd04e91c9818e05a869e608a112ea1655174adb17' => 
     array (
       0 => 'includes\\bas.inc.php',
-      1 => 1390739264,
+      1 => 1390743330,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '1198352e4fd5a142724-10324984',
+  'nocache_hash' => '1202052e5114b6edb36-22047392',
   'function' => 
   array (
   ),
-  'version' => 'Smarty-3.1.16',
-  'unifunc' => 'content_52e4fd5a1b3b22_96124238',
+  'variables' => 
+  array (
+    'utilisateur_connecte' => 0,
+  ),
   'has_nocache_code' => false,
+  'version' => 'Smarty-3.1.16',
+  'unifunc' => 'content_52e5114b6f33b9_67974608',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_52e4fd5a1b3b22_96124238')) {function content_52e4fd5a1b3b22_96124238($_smarty_tpl) {?>					</div>
+<?php if ($_valid && !is_callable('content_52e5114b6f33b9_67974608')) {function content_52e5114b6f33b9_67974608($_smarty_tpl) {?>					</div>
 					<nav class="span4">
 
 						<h2>Menu</h2>
@@ -37,7 +41,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 							<input type="submit" class="btn btn-primary" id="rechercher" name="rechercher" value="rechercher">
 						</form>
 
-						<?php if ('utilisateur_connecte') {?> <!-- Si l'utilisateur est connecté, on affiche le panel d'administration, sinon le formulaire de connexion -->
+						<?php if ($_smarty_tpl->tpl_vars['utilisateur_connecte']->value) {?> <!-- Si l'utilisateur est connecté, on affiche le panel d'administration, sinon le formulaire de connexion -->
 							<h2>Gérer le blog</h2>
 
 							<p>Vous êtes connecté en tant que <<?php ?>?php echo $_SESSION['utilisateur']; ?<?php ?>>
