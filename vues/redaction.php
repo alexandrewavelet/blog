@@ -1,14 +1,10 @@
-<?php
+{include file="includes/haut.inc.php"}
 
-	include('includes/haut.inc.php');
-
-	if (isset($idArticle)) {
-		echo '<h2>Modifier un article</h2>';
-	}else{
-		echo '<h2>Rédiger un article</h2>';
-	}
-
-?>
+{if $idArticle}
+	<h2>Modifier un article</h2>
+{else}
+	<h2>Rédiger un article</h2>
+{/if}
 
 <div id="erreur" class="alert alert-info hide">
 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -16,55 +12,52 @@
 </div>
 
 <form action="cAdministrateur.php?action=validerRedaction" method="POST" enctype="multipart/form-data" id="formulaire">
-	<?php
-		if(isset($idArticle)){ // Si c'est une modification d'article, on créée un champ caché avec l'id de l'article à modifier dans le formulaire
-			echo '<input type="hidden" name="idArticle" id="idArticle" value="'.$idArticle.'"/>';
-		}
-	?>
+
+	{if $idArticle} <!-- Si c'est une modification d'article, on créée un champ caché avec l'id de l'article à modifier dans le formulaire -->
+		<input type="hidden" name="idArticle" id="idArticle" value="{$idArticle}"/>
+	{/if}
 
 	<div class="clearfix">
 		<label for="titre">Titre : </label>
-		<div class="input"><input type="text" name="titre" id="titre" <?php echo "value='".$article['titre']."'"; ?> /></div>
+		<div class="input"><input type="text" name="titre" id="titre" value="{$article.titre}" /></div>
 	</div>
 	<div class="clearfix">
 		<label for="texte">Contenu : </label>
-		<div class="input"><textarea id="texte" name="texte"><?php echo $article['texte']; ?></textarea></div>
+		<div class="input"><textarea id="texte" name="texte">{$article.texte}</textarea></div>
 	</div>
 	<div class="clearfix">
 		<label for="img">Image : </label>
 		<input type="file" id="img" name="img"/>
 	</div>
-	<?php
-		if (isset($article['image'])) {
-			echo '<p>image actuelle : <img src="data/img/'.$article['id'].'.jpg"></p>';
-		}
-	?>
+	{if $article.image}
+		<p>image actuelle : <img src="data/img/{$article.id}.jpg"></p>
+	{/if}
 	<div class="clearfix">
 		<label for="img">Tag : </label>
-		<input type="text" id="tag" name="tag" <?php echo "value='".$article['tag']."'"; ?>/>
+		<input type="text" id="tag" name="tag" value="{$article.tag}"/>
 	</div>
 	<div class="clearfix">
 		<div class="form-actions"><input class="btn btn-large btn-primary" type="submit" value="Valider" name="valider" id="valider"/></div>
 	</div>
 </form>
 
-<script type="text/javascript" >
+{literal}
+	<script type="text/javascript" >
 
-	$(function() {
-		$("#formulaire").submit(function() {
-			if ($("#titre,#texte").val() === "") {
-				$("#erreur").removeClass();
-				$("#erreur").addClass("alert alert-danger");
-				$("#erreur>p").html("Veuillez remplir les champs titre et contenu.");
-				$("#erreur").slideDown("slow");
-				return false;
-			}else{
-				return true;
-			}
+		$(function() {
+			$("#formulaire").submit(function() {
+				if ($("#titre,#texte").val() === "") {
+					$("#erreur").removeClass();
+					$("#erreur").addClass("alert alert-danger");
+					$("#erreur>p").html("Veuillez remplir les champs titre et contenu.");
+					$("#erreur").slideDown("slow");
+					return false;
+				}else{
+					return true;
+				}
+			});
 		});
-	});
 
-</script>
-<?php
-	include('includes/bas.inc.php');
-?>
+	</script>
+{/literal}
+{include file="includes/bas.inc.php"}

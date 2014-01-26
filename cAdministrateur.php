@@ -91,7 +91,7 @@
 	}else{
 
 		$smarty->assign(array('erreur' => 'Vous n\'êtes pas connecté'));
-		$marty->display('vues/erreur.php');
+		$smarty->display('vues/erreur.php');
 
 	}
 
