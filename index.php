@@ -2,10 +2,11 @@
 	
 	session_start();
 
-	// On inclut la connexion à la BDD et le fichier de fonctions
+	// On inclut la connexion à la BDD, le fichier de fonctions, la vérification des cookies et le fichier Smarty
 	include('includes/connexion.inc.php');
 	include('modeles/fonctions.php');
 	include('includes/cookie.inc.php');
+	require('tpl/smarty.class.php');
 
 	// On récupère l'action à effectuer par le contrôleur
 	if (isset($_GET['action'])) {
@@ -13,6 +14,9 @@
 	}else{
 		$action = '';
 	}
+
+	// On créée un objet Smarty pour utiliser le moteur de template
+	$smarty = new Smarty();
 
 	// Switch pour effectuer les traitements selon l'action demandée
 	switch ($action) {
@@ -27,34 +31,34 @@
 				}			
 				$connecte = connexionUtilisateur($login, $mdp, $seSouvenir);
 			}else{
-				$connecte = array(false, "Une erreur s'est produite, veuillez réessayer.");
+				$connecte = array(false, 'Une erreur s\'est produite, veuillez réessayer.');
 			}
 
 			if ($connecte[0]) {
-				$page = 1;
-				$listeArticles = getArticlesPage($page);
-				$nombrePages = getNombrePages();
-				include('vues/accueil.php');		
+				$smarty->assign(array('listeArticles' => getArticlesPage(1),
+					'page' => 1,
+					'nombrePages' => getNombrePages()));
+				$fichier = 'accueil.php';		
 			}else{
-				$erreur = $connecte[1];
-				include('vues/erreur.php');
+				$smarty->assign(array('erreur' => $connecte[1]));
+				$fichier = 'erreur.php';
 			}
 
 			break;
 
 		case 'deconnexion':
 			deconnexionUtilisateur();
-			$page = 1;
-			$listeArticles = getArticlesPage($page);
-			$nombrePages = getNombrePages();
-			include('vues/accueil.php');
+			$smarty->assign(array('listeArticles' => getArticlesPage(1),
+				'page' => 1,
+				'nombrePages' => getNombrePages()));
+			$fichier = 'accueil.php';
 
 			break;
 
 		case 'detail':
 			$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
-			$article = getArticle($idArticle);
-			include('vues/detail.php');
+			$smarty->assign(array('article' => getArticle($idArticle)));
+			$fichier = 'detail.php';
 			
 			break;
 
@@ -69,10 +73,12 @@
 					$articlesCorrespondants = rechercherArticlesAvecTag($tag);
 					$rappelRecherche = 'tag : '.$tag;
 				}
-				include('vues/recherche.php');
+				$smarty->assign(array('articlesCorrespondants' => $articlesCorrespondants,
+					'rappelRecherche' => $rappelRecherche));
+				$fichier = 'recherche.php';
 			}else{
-				$erreur = 'Veuillez entrer une recherche';
-				include('vues/erreur.php');
+				$smarty->assign(array('erreur' => 'Veuillez entrer un terme à rechercher.'));
+				$fichier = 'erreur.php';
 			}
 
 			break;
@@ -85,12 +91,16 @@
 				$page = 1;
 			}
 
-			$listeArticles = getArticlesPage($page);
-			$nombrePages = getNombrePages();
-			include('vues/accueil.php');
+			$smarty->assign(array('listeArticles' => getArticlesPage($page),
+				'page' => $page,
+				'nombrePages' => getNombrePages()));
+			$fichier = 'accueil.php';
 
 			break;
 
 	}
+
+	// On affiche la page demandée
+	$smarty->display('vues/'.$fichier);
 
 ?>

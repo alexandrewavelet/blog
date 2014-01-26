@@ -2,10 +2,14 @@
 	
 	session_start();
 
-	// On inclut la connexion à la BDD et le fichier de fonctions
+	// On inclut la connexion à la BDD, le fichier de fonctions, la vérification des cookies et le fichier Smarty
 	include('includes/connexion.inc.php');
 	include('modeles/fonctions.php');
 	include('includes/cookie.inc.php');
+	require('tpl/smarty.class.php');
+
+	// On créée un objet Smarty pour utiliser le moteur de template
+	$smarty = new Smarty();
 
 	if (estConnecte()) {
 
@@ -20,14 +24,16 @@
 		switch ($action) {
 			case 'rediger':
 				$article = array('titre' => '', 'texte' => '', 'tag' => '');
-				include('vues/redaction.php');
+				$smarty->assign(array('article' => $article));
+				$fichier = 'redaction.php';
 
 				break;
 
 			case 'modifier':
 				$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
-				$article = getArticle($idArticle);
-				include('vues/redaction.php');
+				$smarty->assign(array('article' => getArticle($idArticle),
+					'idArticle' => $idArticle));
+				$fichier = 'redaction.php';
 
 				break;
 
@@ -42,7 +48,7 @@
 					$idArticle = creerArticle($titre, $texte);
 				}
 
-				if (isset($_POST['tag'])) {
+				if (isset($_POST['tag'])) { // Ajou/Suppression du tag de l'article
 					if (empty($_POST['tag'])) {
 						supprimerTagArticle($idArticle);
 					}else{
@@ -51,37 +57,42 @@
 					}
 				}
 
-				if (isset($_FILES['img'])) {
+				if (isset($_FILES['img'])) { // Enregistrement de l'image, si elle existe
 					$message = enregistrerImage($_FILES['img'], $idArticle);
-					if (!$message) {
-						$erreur = $message;
-						include('vues/erreur.php');
-					}else{
-						header("Location:index.php");
-						exit();
-					}
+				}
+
+				if (isset($message) && !$message) {
+					$smarty->assign(array('erreur' => $message));
+					$fichier = 'erreur.php';
+				}else{
+					header('Location:index.php');
+					exit();
 				}
 
 				break;
 
 			case 'supprimer':
 				$idArticle = htmlentities(mysql_real_escape_string($_GET['id']));
-				$message = supprimerArticle($idArticle);
-				include('vues/suppression.php');
+				$smarty->assign(array('message' => supprimerArticle($idArticle)));
+				$fichier = 'suppression.php';
+
 				break;
 
 			default:
-				header("Location:index.php");
+				header('Location:index.php');
 				exit();
 
 				break;
 		}
 
+		// On affiche la page demandée
+		$smarty->display('vues/'.$fichier);
+
 	}else{
-		$erreur = "Vous n'êtes pas connecté.";
-		include('vues/erreur.php');
+
+		$smarty->assign(array('erreur' => 'Vous n\'êtes pas connecté'));
+		$marty->display('vues/erreur.php');
+
 	}
-
-
 
 ?>
