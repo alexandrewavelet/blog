@@ -20,7 +20,8 @@
 		$articlesParPage = 5;
 		$requeteNombreArticles = 'SELECT COUNT(id) AS nombreArticles FROM articles';
 		$res = mysql_query($requeteNombreArticles);
-		$nombreArticles = mysql_fetch_array($res)['nombreArticles'];
+		$nombreArticles = mysql_fetch_array($res);
+		$nombreArticles = $nombreArticles['nombreArticles'];
 		$nombrePages = ceil($nombreArticles/$articlesParPage);
 		return $nombrePages;
 	}
@@ -32,7 +33,8 @@
 	function connexionUtilisateur($login, $mdp, $seSouvenir){
 		$requeteConnexion = 'SELECT COUNT(*) AS connecte FROM utilisateurs WHERE login = "'.$login.'" AND mdp = "'.$mdp.'"';
 		$res = mysql_query($requeteConnexion);
-		$connecte = mysql_fetch_array($res)['connecte'];
+		$connecte = mysql_fetch_array($res);
+		$connecte = $connecte['connecte'];
 		if ($connecte == 1) {
 			$connexion = array(true, 'Connexion réussie');
 			$_SESSION['utilisateur'] = $login;
@@ -71,7 +73,8 @@
 	function supprimerArticle($idArticle){
 		$requeteMessage = 'SELECT titre FROM articles WHERE id = '.$idArticle;
 		$res = mysql_query($requeteMessage);
-		$message = 'L\'article "'.mysql_fetch_array($res)['titre'].'" (id : '.$idArticle.') a correctement été supprimé.';
+		$titre = mysql_fetch_array($res);
+		$message = 'L\'article "'.$titre['titre'].'" (id : '.$idArticle.') a correctement été supprimé.';
 		$requeteSuppression = 'DELETE FROM articles WHERE id = '.$idArticle;
 		$res = mysql_query($requeteSuppression);
 		return $message;
@@ -190,7 +193,8 @@
 	function articleTage($idArticle){
 		$requeteNombreTags = 'SELECT COUNT(*) AS nombreTags FROM tagsarticles WHERE idArticle = '.$idArticle;
 		$res = mysql_query($requeteNombreTags);
-		$nbTags = mysql_fetch_array($res)['nombreTags'];
+		$nbTags = mysql_fetch_array($res);
+		$nbTags = $nbTags['nombreTags'];
 		$booleen = false;
 		if ($nbTags > 0) {
 			$booleen = true;
@@ -204,12 +208,14 @@
 	function supprimerTagArticle($idArticle){
 		$requeteTagPrecedent = 'SELECT idTag FROM tagsarticles WHERE idArticle = '.$idArticle;
 		$res = mysql_query($requeteTagPrecedent);
-		$idTagPrecedent = mysql_fetch_array($res)['idTag'];
+		$idTagPrecedent = mysql_fetch_array($res);
+		$idTagPrecedent = $idTagPrecedent['idTag'];
 		$requeteSuppression = 'DELETE FROM tagsarticles WHERE idArticle = '.$idArticle;
 		$res = mysql_query($requeteSuppression);
 		$requeteNbArticlesTagPrecedent = 'SELECT COUNT(*) AS nombreArticles FROM tagsarticles WHERE idTag = '.$idTagPrecedent;
 		$res = mysql_query($requeteNbArticlesTagPrecedent);
-		$nbArticlesTagPrecedent = mysql_fetch_array($res)['nombreArticles'];
+		$nbArticlesTagPrecedent = mysql_fetch_array($res);
+		$nbArticlesTagPrecedent = $nbArticlesTagPrecedent['nombreArticles'];
 		if ($nbArticlesTagPrecedent == 0) {
 			supprimerTag($idTagPrecedent);
 		}
@@ -233,7 +239,8 @@
 		if (mysql_num_rows($res) == 0) {
 			$id = creerTag($tag);
 		}else{
-			$id = mysql_fetch_array($res)['id'];
+			$id = mysql_fetch_array($res);
+			$id = $id['id'];
 		}
 		return $id;
 	}

@@ -6,7 +6,7 @@
 	include('includes/connexion.inc.php');
 	include('modeles/fonctions.php');
 	include('includes/cookie.inc.php');
-	require('tpl/smarty.class.php');
+	require('tpl/Smarty.class.php');
 
 	// On créée un objet Smarty pour utiliser le moteur de template
 	$smarty = new Smarty();
